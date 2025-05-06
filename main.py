@@ -26,11 +26,14 @@ if __name__ == '__main__':
         project_name="image_classification"
     )
 
-    image_data = []
-    labels = []
+
+    x_data_train, x_data_test, y_data_train, y_data_test = [], [], [], []
 
     for class_name in CLASSES:
         print(class_name)
+
+        image_data = []
+        labels = []
 
         path = os.path.join(DATA_PATH, class_name)
 
@@ -40,24 +43,34 @@ if __name__ == '__main__':
                 image_data.append(cv2.resize(img_arr, (IMG_SIZE, IMG_SIZE)))
                 labels.append(class_name)
 
-    #Преобразуем в nparray
-    image_data = np.array(image_data)
-    labels = np.array(labels)
+        #Преобразуем в nparray
+        image_data = np.array(image_data)
+        labels = np.array(labels)
 
-    #Подготавливаем данные в нужном формате
-    image_data = add_color_channel(image_data, Data.Keras)
+        #Подготавливаем данные в нужном формате
+        image_data = add_color_channel(image_data, Data.Keras)
 
-    #Нормализация
-    input_data = normalize(image_data)
+        #Нормализация
+        input_data = normalize(image_data)
 
-    #Кодирование меток классов
-    labels = data_encoder.to_encoded(labels)
+        #Кодирование меток классов
+        labels = data_encoder.to_encoded(labels)
 
-    #Разделение на тестовую и тренировочную выборку
-    X_train, X_test, Y_train, Y_test = train_test_split(input_data, labels, test_size=0.2)
+        #Разделение на тестовую и тренировочную выборку
+        X_train, X_test, Y_train, Y_test = train_test_split(input_data, labels, test_size=0.2)
+
+        x_data_train.append(X_train)
+        x_data_test.append(X_test)
+        y_data_train.append(Y_train)
+        y_data_test.append(Y_test)
+
+    x_data_train = np.concatenate(x_data_train, axis=0)
+    x_data_test = np.concatenate(x_data_test, axis=0)
+    y_data_train = np.concatenate(y_data_train, axis=0)
+    y_data_test = np.concatenate(y_data_test, axis=0)
 
     #Обучение модели
-    model.fit(x=X_train, y=Y_train)
+    model.fit(x=x_data_train, y=y_data_train)
 
     #Проверка точности
-    print("Accuracy:", accuracy_score(Y_test, model.predict(X_test)))
+    print("Accuracy:", accuracy_score(y_data_test, model.predict(x_data_test)))
