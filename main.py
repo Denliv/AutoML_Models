@@ -7,6 +7,7 @@ import autokeras as ak
 
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
+from tensorflow.python import keras
 from data_utils.data_utils import *
 
 
@@ -61,3 +62,6 @@ if __name__ == '__main__':
 
     #Проверка точности
     print("Accuracy:", accuracy_score(Y_test, model.predict(X_test)))
+
+    model.export_model().save("model_1.keras")
+    # model = keras.models.load_model("best_model.keras", compile=True)
