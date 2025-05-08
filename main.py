@@ -15,6 +15,7 @@ from data_utils.data_utils import *
 DATA_PATH = "data"
 CLASSES = os.listdir(DATA_PATH)
 IMG_SIZE = 50
+MAX_IMAGE_NUMBER_PER_CLASS = 2500
 
 
 if __name__ == '__main__':
@@ -23,7 +24,8 @@ if __name__ == '__main__':
 
     model = ak.ImageClassifier(
         num_classes=len(CLASSES),
-        overwrite=True,
+        max_trials=10,
+        overwrite=False,
         project_name="image_classification"
     )
 
@@ -38,7 +40,10 @@ if __name__ == '__main__':
 
         path = os.path.join(DATA_PATH, class_name)
 
-        for img in os.listdir(path):
+        for count, img in enumerate(os.listdir(path)):
+            if count > MAX_IMAGE_NUMBER_PER_CLASS:
+                break
+
             img_arr = cv2.imread(os.path.join(path, img), cv2.IMREAD_GRAYSCALE)
             if img_arr is not None:
                 image_data.append(cv2.resize(img_arr, (IMG_SIZE, IMG_SIZE)))
@@ -70,8 +75,13 @@ if __name__ == '__main__':
     y_data_train = np.concatenate(y_data_train, axis=0)
     y_data_test = np.concatenate(y_data_test, axis=0)
 
+    print(x_data_train.shape)
+    print(y_data_train.shape)
+    print(x_data_test.shape)
+    print(y_data_test.shape)
+
     #Обучение модели
-    model.fit(x=x_data_train, y=y_data_train)
+    model.fit(x=x_data_train, y=y_data_train, epochs=50)
 
     #Проверка точности
     print("Accuracy:", accuracy_score(y_data_test, model.predict(x_data_test)))
