@@ -3,11 +3,12 @@ import pandas as pd
 import cv2
 import os
 import sklearn.model_selection
-import autokeras as ak
 
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
-from tensorflow.python import keras
+
+from auto_ml.autokeras.OriginalImageClassifier import *
+from auto_ml.autokeras.AutoModelImageClassifier import *
 from data_utils.data_utils import *
 
 
@@ -22,7 +23,7 @@ if __name__ == '__main__':
 
     data_encoder = DataEncoder(CLASSES)
 
-    model = ak.ImageClassifier(
+    model = OriginalImageClassifier(
         num_classes=len(CLASSES),
         max_trials=10,
         overwrite=False,
@@ -86,5 +87,5 @@ if __name__ == '__main__':
     #Проверка точности
     print("Accuracy:", accuracy_score(y_data_test, model.predict(x_data_test)))
 
-    model.export_model().save("model_1.keras")
-    # model = keras.models.load_model("best_model.keras", compile=True)
+    #Сохранение модели
+    model.save_model("model_original_image_classifier.keras")
