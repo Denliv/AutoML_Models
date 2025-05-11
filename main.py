@@ -1,4 +1,5 @@
-﻿import numpy as np
+﻿import autokeras as ak
+import numpy as np
 import pandas as pd
 import cv2
 import os
@@ -15,17 +16,33 @@ from data_utils.data_utils import *
 
 DATA_PATH = "data"
 CLASSES = os.listdir(DATA_PATH)
-IMG_SIZE = 50
-MAX_IMAGE_NUMBER_PER_CLASS = 2500
+IMG_SIZE = 224
+MAX_IMAGE_NUMBER_PER_CLASS = 5000
 
 
 if __name__ == '__main__':
 
     data_encoder = DataEncoder(CLASSES)
 
-    model = OriginalImageClassifier(
-        num_classes=len(CLASSES),
-        max_trials=10,
+    # model = OriginalImageClassifier(
+    #     num_classes=len(CLASSES),
+    #     max_trials=5,
+    #     overwrite=False,
+    #     project_name="image_classification"
+    # )
+
+    input_node = ak.ImageInput()
+    output_node = ak.ImageBlock(
+        block_type="resnet",
+        normalize=True,
+        augment=False,
+    )(input_node)
+    output_node = ak.ClassificationHead()(output_node)
+
+    model = AutoModelImageClassifier(
+        inputs=input_node,
+        outputs=output_node,
+        max_trials=5,
         overwrite=False,
         project_name="image_classification"
     )

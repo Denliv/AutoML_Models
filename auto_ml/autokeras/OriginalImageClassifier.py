@@ -1,7 +1,6 @@
 ﻿from autokeras import ImageClassifier
 from tensorflow.python import keras
 
-
 class OriginalImageClassifier:
     def __init__(
             self,
