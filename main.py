@@ -4,6 +4,7 @@ import pandas as pd
 import cv2
 import os
 import sklearn.model_selection
+from matplotlib import pyplot as plt
 
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
@@ -99,10 +100,20 @@ if __name__ == '__main__':
     print(y_data_test.shape)
 
     #Обучение модели
-    model.fit(x=x_data_train, y=y_data_train, epochs=50)
+    history = model.fit(x=x_data_train, y=y_data_train, epochs=50)
 
     #Проверка точности
     print("Accuracy:", accuracy_score(y_data_test, model.predict(x_data_test)))
 
     #Сохранение модели
     model.save_model("model_original_image_classifier.keras")
+
+    print(model.model.evaluate(x_data_test, y_data_test))
+
+    keras.utils.plot_model(model, show_shapes=True, expand_treeed=True, to_file="name.png")
+
+    history_df = pd.DataFrame(history.history)
+    history_df[['loss', 'val_loss']].plot()
+    history_df[['accuracy', 'val_accuracy']].plot()
+    plt.legend(['train', 'val'], loc='upper left')
+    plt.show()
