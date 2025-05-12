@@ -1,13 +1,14 @@
-﻿import autokeras as ak
-import numpy as np
+﻿import numpy as np
 import pandas as pd
 import cv2
 import os
 import sklearn.model_selection
 from matplotlib import pyplot as plt
+import autokeras as ak
 
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
+from keras.src.callbacks import EarlyStopping
 
 from auto_ml.autokeras.OriginalImageClassifier import *
 from auto_ml.autokeras.AutoModelImageClassifier import *
@@ -17,8 +18,8 @@ from data_utils.data_utils import *
 
 DATA_PATH = "data"
 CLASSES = os.listdir(DATA_PATH)
-IMG_SIZE = 224
-MAX_IMAGE_NUMBER_PER_CLASS = 5000
+IMG_SIZE = 50
+MAX_IMAGE_NUMBER_PER_CLASS = 3000
 
 
 if __name__ == '__main__':
@@ -35,7 +36,7 @@ if __name__ == '__main__':
     input_node = ak.ImageInput()
     output_node = ak.ImageBlock(
         block_type="resnet",
-        normalize=True,
+        normalize=False,
         augment=False,
     )(input_node)
     output_node = ak.ClassificationHead()(output_node)
@@ -43,11 +44,10 @@ if __name__ == '__main__':
     model = AutoModelImageClassifier(
         inputs=input_node,
         outputs=output_node,
-        max_trials=5,
+        max_trials=3,
         overwrite=False,
-        project_name="image_classification"
+        project_name="autokeras_automodel_resnet"
     )
-
 
     x_data_train, x_data_test, y_data_train, y_data_test = [], [], [], []
 
@@ -62,8 +62,10 @@ if __name__ == '__main__':
         for count, img in enumerate(os.listdir(path)):
             if count > MAX_IMAGE_NUMBER_PER_CLASS:
                 break
-
+            # img_arr = cv2.imread(os.path.join(path, img), cv2.IMREAD_COLOR)
+            # img_arr = cv2.cvtColor(img_arr, cv2.COLOR_BGR2RGB)
             img_arr = cv2.imread(os.path.join(path, img), cv2.IMREAD_GRAYSCALE)
+            img_arr = np.repeat(img_arr, 3, axis=-1)
             if img_arr is not None:
                 image_data.append(cv2.resize(img_arr, (IMG_SIZE, IMG_SIZE)))
                 labels.append(class_name)
@@ -73,7 +75,7 @@ if __name__ == '__main__':
         labels = np.array(labels)
 
         #Подготавливаем данные в нужном формате
-        image_data = add_color_channel(image_data, Data.Keras)
+        # image_data = add_color_channel(image_data, Data.Keras)
 
         #Нормализация
         input_data = normalize(image_data)
@@ -100,13 +102,15 @@ if __name__ == '__main__':
     print(y_data_test.shape)
 
     #Обучение модели
-    history = model.fit(x=x_data_train, y=y_data_train, epochs=50)
+    # early_stopping = EarlyStopping(monitor='val_loss', min_delta=0, patience=5, verbose=1, mode='auto', restore_best_weights=True)
+    # model.fit(x=x_data_train, y=y_data_train, epochs=20, callbacks=[early_stopping])
+    history = model.fit(x=x_data_train, y=y_data_train, epochs=15)
 
     #Проверка точности
-    print("Accuracy:", accuracy_score(y_data_test, model.predict(x_data_test)))
+    print("Accuracy:", accuracy_score(y_data_test, model.model.export_model().predict(x_data_test)))
 
     #Сохранение модели
-    model.save_model("model_original_image_classifier.keras")
+    model.save_model("model_autokeras_automodel_resnet.keras")
 
     print(model.model.evaluate(x_data_test, y_data_test))
 
