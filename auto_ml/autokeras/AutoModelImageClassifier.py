@@ -1,5 +1,7 @@
-﻿from autokeras import AutoModel
-from tensorflow.python import keras
+﻿# import tensorflow
+import keras
+from autokeras import AutoModel
+# from tensorflow.python import keras
 
 class AutoModelImageClassifier:
     def __init__(
@@ -42,7 +44,13 @@ class AutoModelImageClassifier:
         self._model.fit(x=x, y=y, epochs=epochs, callbacks=callbacks)
 
     def predict(self, x):
-        return self._model.predict(x)
+        return self._model.export_model().predict(x)
 
     def save_model(self, model_path):
         self._model.export_model().save(model_path)
+
+    def evaluate(self, x, y):
+        return self._model.evaluate(x=x, y=y)
+
+    def summary(self):
+        return self._model.export_model().summary()
