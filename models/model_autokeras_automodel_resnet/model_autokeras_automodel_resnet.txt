@@ -1,7 +1,5 @@
-﻿357/357 ━━━━━━━━━━━━━━━━━━━━ 34s 90ms/step - accuracy: 0.4872 - loss: 1.6343
-Accuracy (keras): [1.639341950416565, 0.48503991961479187]
-357/357 ━━━━━━━━━━━━━━━━━━━━ 35s 95ms/step
-Accuracy (sklearn): 0.4850399227866983
+Accuracy (keras): [1.641956090927124, 0.4912280738353729]
+Accuracy (sklearn): 0.49122807017543857
 Model: "functional"
 ┌─────────────────────────────────┬────────────────────────┬───────────────┐
 │ Layer (type)                    │ Output Shape           │       Param # │
@@ -22,3 +20,4 @@ Model: "functional"
  Trainable params: 23,690,259 (90.37 MB)
  Non-trainable params: 53,120 (207.50 KB)
  Optimizer params: 47,380,520 (180.74 MB)
+

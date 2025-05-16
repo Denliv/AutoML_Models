@@ -1,7 +1,5 @@
 ﻿import keras
-
 from autokeras import ImageClassifier
-# from tensorflow.python import keras
 
 class OriginalImageClassifier:
     def __init__(
@@ -40,8 +38,8 @@ class OriginalImageClassifier:
     def model(self, value):
         self._model = value
 
-    def fit(self, x, y, epochs = None, callbacks = None):
-        self._model.fit(x=x, y=y, epochs=epochs, callbacks=callbacks)
+    def fit(self, x, y, epochs = None, callbacks = None, validation_split = 0.2, validation_data = None):
+        return self._model.fit(x=x, y=y, epochs=epochs, callbacks=callbacks, validation_split=validation_split, validation_data=validation_data)
 
     def predict(self, x):
         return self._model.export_model().predict(x)
@@ -50,7 +48,7 @@ class OriginalImageClassifier:
         self._model.export_model().save(model_path)
 
     def evaluate(self, x, y):
-        return self._model.evaluate(x=x, y=y)
+        return self._model.export_model().evaluate(x=x, y=y)
 
-    def summary(self):
-        return self._model.export_model().summary()
+    def summary(self, print_fn=None):
+        return self._model.export_model().summary(print_fn=print_fn)
