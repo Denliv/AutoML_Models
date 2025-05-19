@@ -1,19 +1,20 @@
 ﻿import keras
 from autokeras import ImageClassifier
 
+
 class OriginalImageClassifier:
     def __init__(
             self,
-            num_classes = None,
-            multi_label = False,
-            project_name = "image_classifier",
-            max_trials = 100,
-            directory = None,
-            objective = "val_loss",
-            overwrite = False,
-            seed = None,
-            max_model_size = None
-            ):
+            num_classes=None,
+            multi_label=False,
+            project_name="image_classifier",
+            max_trials=100,
+            directory=None,
+            objective="val_loss",
+            overwrite=False,
+            seed=None,
+            max_model_size=None
+    ):
         self._model = ImageClassifier(
             num_classes=num_classes,
             multi_label=multi_label,
@@ -27,7 +28,7 @@ class OriginalImageClassifier:
         )
 
     @classmethod
-    def load_model(cls, model_path, compile_param = False):
+    def load_model(cls, model_path, compile_param=False):
         cls.model = keras.models.load_model(model_path, compile=compile_param)
 
     @property
@@ -38,7 +39,7 @@ class OriginalImageClassifier:
     def model(self, value):
         self._model = value
 
-    def fit(self, x, y, epochs = None, callbacks = None, validation_split = 0.2, validation_data = None):
+    def fit(self, x, y, epochs=None, callbacks=None, validation_split=0.2, validation_data=None):
         return self._model.fit(x=x, y=y, epochs=epochs, callbacks=callbacks, validation_split=validation_split, validation_data=validation_data)
 
     def predict(self, x):

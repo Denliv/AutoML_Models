@@ -1,19 +1,20 @@
 ﻿import keras
 from autokeras import AutoModel
 
+
 class AutoModelImageClassifier:
     def __init__(
             self,
             inputs,
             outputs,
-            project_name = "auto_model",
-            max_trials = 100,
-            directory = None,
-            objective = "val_loss",
-            overwrite = False,
-            seed = None,
-            max_model_size = None,
-            ):
+            project_name="auto_model",
+            max_trials=100,
+            directory=None,
+            objective="val_loss",
+            overwrite=False,
+            seed=None,
+            max_model_size=None,
+    ):
         self._model = AutoModel(
             inputs=inputs,
             outputs=outputs,

@@ -6,7 +6,6 @@ import os
 import sklearn.model_selection
 import autokeras as ak
 import keras
-import graphviz
 
 from keras.api.utils import to_categorical
 from keras.api.utils import plot_model
@@ -14,7 +13,6 @@ from matplotlib import pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
-from auto_ml.autokeras.OriginalImageClassifier import *
 from auto_ml.autokeras.AutoModelImageClassifier import *
 from data_utils.data_utils import *
 
@@ -86,18 +84,16 @@ class ModelTrainer:
         print("Y val: ", self.y_data_val.shape)
 
     def fit_model(self, epochs=None):
-        # Обучение модели
-        # early_stopping = EarlyStopping(monitor='val_loss', min_delta=0, patience=5, verbose=1, mode='auto', restore_best_weights=True)
-        # model.fit(x=x_data_train, y=y_data_train, epochs=20, callbacks=[early_stopping])
         try:
             self.history = self.model.fit(x=self.x_data_train, y=self.y_data_train, epochs=epochs, validation_data=(self.x_data_val, self.y_data_val)).history
         except Exception as e:
             print(e)
         try:
+            os.makedirs(f"{self.model_dir}", exist_ok=True)
             with open(f"{self.model_path}_history.json", "w", encoding="utf-8") as f:
                 json.dump(self.history, f)
-        except:
-            pass
+        except Exception as e:
+            print(e)
 
     def show_graphics(self):
         if not self.history and os.path.exists(f"{self.model_path}_history.json"):
@@ -129,6 +125,7 @@ class ModelTrainer:
         plt.close()
 
     def save_model(self, extension=".keras"):
+        os.makedirs(f"{self.model_dir}", exist_ok=True)
         self.model.save_model(self.model_path + extension)
 
     def describe_model(self):
@@ -139,6 +136,8 @@ class ModelTrainer:
             plot_model(self.model, show_shapes=True, expand_nested=False, to_file=f"{self.model_path}.png")
         except ImportError:
             print("Graphviz not installed - skipping model visualization")
+        except Exception:
+            plot_model(self.model.model.export_model(), show_shapes=True, expand_nested=False, to_file=f"{self.model_path}.png")
 
     def calculate_accuracy(self, x_test, y_test):
         y_test_onehot = to_categorical(y_test, num_classes=len(self.classes))
@@ -155,20 +154,13 @@ if __name__ == '__main__':
     CLASSES = os.listdir(DATA_PATH)
     IMG_SIZE = 50
     MAX_IMAGE_NUMBER_PER_CLASS = 3000
-    MODEL_NAME = "model_autokeras_automodel_resnet"
+    MODEL_NAME = "model_autokeras_automodel_vanilla"
     MODEL_DIR = os.path.join("models", MODEL_NAME)
     MODEL_PATH = os.path.join(MODEL_DIR, MODEL_NAME)
 
-    # current_model = OriginalImageClassifier(
-    #     num_classes=len(CLASSES),
-    #     max_trials=5,
-    #     overwrite=False,
-    #     project_name="garbage_image_classification"
-    # )
-
     input_node = ak.ImageInput()
     output_node = ak.ImageBlock(
-        block_type="resnet",
+        block_type="vanilla",
         normalize=False,
         augment=False,
     )(input_node)
@@ -177,9 +169,9 @@ if __name__ == '__main__':
     current_model = AutoModelImageClassifier(
         inputs=input_node,
         outputs=output_node,
-        max_trials=5,
+        max_trials=10,
         overwrite=False,
-        project_name="autokeras_automodel_resnet"
+        project_name="autokeras\\autokeras_automodel_vanilla"
     )
 
     # current_model = keras.models.load_model(f"{MODEL_PATH}.keras", custom_objects=ak.CUSTOM_OBJECTS)
