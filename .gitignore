@@ -1,3 +1,4 @@
 ﻿/models/*/*.keras
 /*/*/*/*.h5
 /*/*/*.keras
+/.yolo_data/

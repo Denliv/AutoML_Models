@@ -1,0 +1,4 @@
+﻿train: /path/to/dataset/train
+val: /path/to/dataset/val
+nc: 19
+names: ['class1', 'class2']
