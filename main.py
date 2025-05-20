@@ -169,7 +169,7 @@ if __name__ == '__main__':
     current_model = AutoModelImageClassifier(
         inputs=input_node,
         outputs=output_node,
-        max_trials=10,
+        max_trials=49,
         overwrite=False,
         project_name="autokeras\\autokeras_automodel_vanilla"
     )
