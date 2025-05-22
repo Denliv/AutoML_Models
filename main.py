@@ -154,13 +154,13 @@ if __name__ == '__main__':
     CLASSES = os.listdir(DATA_PATH)
     IMG_SIZE = 50
     MAX_IMAGE_NUMBER_PER_CLASS = 3000
-    MODEL_NAME = "model_autokeras_automodel_vanilla"
+    MODEL_NAME = "model_autokeras_automodel_xception"
     MODEL_DIR = os.path.join("models", MODEL_NAME)
     MODEL_PATH = os.path.join(MODEL_DIR, MODEL_NAME)
 
     input_node = ak.ImageInput()
     output_node = ak.ImageBlock(
-        block_type="vanilla",
+        block_type="xception",
         normalize=False,
         augment=False,
     )(input_node)
@@ -169,9 +169,9 @@ if __name__ == '__main__':
     current_model = AutoModelImageClassifier(
         inputs=input_node,
         outputs=output_node,
-        max_trials=49,
+        max_trials=2,
         overwrite=False,
-        project_name="autokeras\\autokeras_automodel_vanilla"
+        project_name="autokeras\\autokeras_automodel_xception"
     )
 
     # current_model = keras.models.load_model(f"{MODEL_PATH}.keras", custom_objects=ak.CUSTOM_OBJECTS)
@@ -191,7 +191,7 @@ if __name__ == '__main__':
     model_trainer.split_data(test_size=0.2, random_state=42)
 
     # Обучение модели
-    model_trainer.fit_model(epochs=20)
+    model_trainer.fit_model(epochs=15)
 
     # Сохранение модели
     model_trainer.save_model(extension=".keras")
