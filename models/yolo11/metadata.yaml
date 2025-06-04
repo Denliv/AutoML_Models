@@ -1,0 +1,38 @@
+description: Ultralytics YOLO11n-cls model trained on .yolo_data
+author: Ultralytics
+date: '2025-05-22T14:24:32.090358'
+version: 8.3.141
+license: AGPL-3.0 License (https://ultralytics.com/license)
+docs: https://docs.ultralytics.com
+stride: 1
+task: classify
+batch: 1
+imgsz:
+- 50
+- 50
+names:
+  0: call
+  1: dislike
+  2: fist
+  3: four
+  4: like
+  5: mute
+  6: no_gesture
+  7: ok
+  8: one
+  9: palm
+  10: peace
+  11: peace_inverted
+  12: rock
+  13: stop
+  14: stop_inverted
+  15: three
+  16: three2
+  17: two_up
+  18: two_up_inverted
+args:
+  batch: 1
+  keras: true
+  int8: false
+  nms: false
+channels: 3
